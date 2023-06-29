@@ -78,20 +78,27 @@ def tobs():
 @app.route("/api/v1.0/<start>")
 def start(start):
     session = Session(engine)
-    date = session.query(measurement.date)
-    if date == start:
-        start_date = session.query(measurement.date).filter(measurement.date > start).all()
-        station_results = [func.min(measurement.tobs),
-                           func.max(measurement.tobs),
-                           func.avg(measurement.tobs)]
-        station_results_list = session.query(*station_results).filter(measurement.date == start_date).all()
-        station_results_list_2 = list(np.ravel(station_results_list))
-        return jsonify(station_results_list_2)
+    start == session.query(measurement.date == start).all()
+    search_list = [func.min(measurement.tobs),
+                   func.max(measurement.tobs),
+                   func.avg(measurement.tobs)]
+    search_list_results = session.query(*search_list).filter(measurement.date == start).all()
+    session.close()
+    query_results = list(np.ravel(search_list_results))
+    return jsonify(query_results)
 
-    return jsonify({"error": f"{start} not found"}), 404
-
-# @app.route("/api/v1.0/<start>/<end>")
-# def start(start_end):
+@app.route("/api/v1.0/<start>/<end>")
+def start_end(start, end):
+    session = Session(engine)
+    start = session.query(measurement.date >= start).all()
+    end = session.query(measurement.date <= end).all()
+    search_list = [func.min(measurement.tobs),
+                   func.max(measurement.tobs),
+                   func.avg(measurement.tobs)]
+    search_list_results = session.query(*search_list).filter(measurement.date == start).filter(measurement.date == end).all()
+    session.close()
+    query_results = list(np.ravel(search_list_results))
+    return jsonify(query_results)
 
 if __name__ == "__main__":
     app.run(debug=True)
