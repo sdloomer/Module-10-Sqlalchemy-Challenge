@@ -78,7 +78,7 @@ def stations():
 @app.route("/api/v1.0/tobs")
 def tobs():
     session = Session(engine)
-    most_active_station = session.query(measurement.tobs).filter(measurement.date <= '2017-08-18', measurement.date >= '2016-08-18').filter(measurement.station == 'USC00519281').all()
+    most_active_station = session.query(Measurement.tobs).filter(Measurement.date <= '2017-08-18', Measurement.date >= '2016-08-18').filter(measurement.station == 'USC00519281').all()
     session.close()
     most_active = list(np.ravel(most_active_station))
     return jsonify(most_active)
